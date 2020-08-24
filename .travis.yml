@@ -8,7 +8,7 @@ deploy:
     branches:
       only:
         - master
-        - /^TICKET-.*$/
+        - /.*/
 
 notifications:
   slack: hardyantzcorp:VjbEAi5nWM1HXSHZwhhsyqQa
