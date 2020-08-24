@@ -10,7 +10,7 @@ import (
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		panic("Port not set")
+		port = "8009"
 	}
 
 	e := echo.New()
