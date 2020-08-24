@@ -34,7 +34,7 @@ func PushDeploy(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	if !s.ValidateToken("xoxb-321382646324-1317345874069-IuqXALX2QXxRnYpyHj18vy5H") {
+	if !s.ValidateToken("xoxb-321382646324-1317345874069-NSAvcRdOccXNscBElJJ7Oyf4") {
 		return c.String(http.StatusUnauthorized, "invalid token")
 	}
 
