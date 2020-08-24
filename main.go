@@ -23,7 +23,7 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.GET("/slack/build", PushDeploy)
+	e.POST("/slack/build", PushDeploy)
 
 	e.Logger.Fatal(e.Start(":" + port))
 }
@@ -35,7 +35,7 @@ func PushDeploy(c echo.Context) error {
 	}
 
 	if !s.ValidateToken(os.Getenv("SLACK_VERIFICATION_TOKEN")) {
-		return c.String(http.StatusUnauthorized,"invalid token")
+		return c.String(http.StatusUnauthorized, "invalid token")
 	}
 
 	params := &slack.Msg{Text: s.Text}
