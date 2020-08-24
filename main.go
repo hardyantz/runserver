@@ -1,9 +1,14 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"runserver/shared"
+	"strings"
+	"time"
 
 	"github.com/labstack/echo"
 	"github.com/slack-go/slack"
@@ -40,5 +45,38 @@ func PushDeploy(c echo.Context) error {
 
 	params := &slack.Msg{Text: s.Text}
 
-	return c.String(http.StatusOK, fmt.Sprintf("deployed branch %v", params.Text))
+	err = CallTravis(c.Request().Context(), params.Text)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+
+	return c.String(http.StatusOK, fmt.Sprintf("start deploy branch %v", params.Text))
+}
+
+func CallTravis(c context.Context, branch string) error {
+	req := shared.NewRequest(2, 30*time.Second)
+
+	travisUrl := "https://api.travis-ci.com/repo/hardyantz%2Frunserver/requests"
+
+	params := map[string]interface{}{
+		"request": map[string]string{"branch": branch},
+	}
+	str, _ := json.Marshal(params)
+	byteReq := strings.NewReader(string(str))
+
+	headers := map[string]string{
+		echo.HeaderContentType:   echo.MIMEApplicationJSON,
+		echo.HeaderAccept:        echo.MIMEApplicationJSON,
+		"Travis-API-Version":     "3",
+		echo.HeaderAuthorization: "token SQ5Z466aaRH67-ZkLa_Clw",
+	}
+
+	var target interface{}
+
+	_, err := req.Do(c, http.MethodPost, travisUrl, byteReq, &target, headers)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
