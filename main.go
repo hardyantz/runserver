@@ -1,13 +1,11 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/labstack/echo"
 	"github.com/slack-go/slack"
@@ -44,7 +42,7 @@ func PushDeploy(c echo.Context) error {
 
 	params := &slack.Msg{Text: s.Text}
 
-	err = CallTravis(c.Request().Context(), params.Text)
+	err = CallTravis(params.Text)
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
@@ -52,9 +50,7 @@ func PushDeploy(c echo.Context) error {
 	return c.String(http.StatusOK, fmt.Sprintf("start deploy branch %v", params.Text))
 }
 
-func CallTravis(c context.Context, branch string) error {
-	req := NewRequest(2, 30*time.Second)
-
+func CallTravis(branch string) error {
 	travisUrl := "https://api.travis-ci.com/repo/hardyantz%2Frunserver/requests"
 
 	if branch == "" {
@@ -76,7 +72,7 @@ func CallTravis(c context.Context, branch string) error {
 
 	var target interface{}
 
-	_, err := req.Do(c, http.MethodPost, travisUrl, byteReq, &target, headers)
+	err := httpRequest(http.MethodPost, travisUrl, byteReq, headers, &target)
 	if err != nil {
 		return err
 	}
