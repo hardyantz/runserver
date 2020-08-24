@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"runserver/shared"
 	"strings"
 	"time"
 
@@ -54,9 +53,13 @@ func PushDeploy(c echo.Context) error {
 }
 
 func CallTravis(c context.Context, branch string) error {
-	req := shared.NewRequest(2, 30*time.Second)
+	req := NewRequest(2, 30*time.Second)
 
 	travisUrl := "https://api.travis-ci.com/repo/hardyantz%2Frunserver/requests"
+
+	if branch == "" {
+		branch = "master"
+	}
 
 	params := map[string]interface{}{
 		"request": map[string]string{"branch": branch},
