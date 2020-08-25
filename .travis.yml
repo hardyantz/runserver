@@ -6,6 +6,7 @@ deploy:
   app: runserver-hardyantz
   on:
     all_branches: true
+    tags: true
 
 notifications:
   slack: hardyantzcorp:VjbEAi5nWM1HXSHZwhhsyqQa
