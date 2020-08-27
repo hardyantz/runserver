@@ -25,6 +25,10 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
+	e.GET("/feature-101", func(c echo.Context) error {
+		return c.String(http.StatusOK, "This is 101 feature")
+	})
+
 	e.POST("/slack/build", PushDeploy)
 
 	e.Logger.Fatal(e.Start(":" + port))
